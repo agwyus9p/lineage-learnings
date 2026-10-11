@@ -1,13 +1,13 @@
 # Lessons: base58-py
 
-Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 14 published attempts.
+Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 16 published attempts.
 
 Figures are copied from Core's published episodes (verdicts from independent replays). Nothing here is estimated.
 
 ## Target (none chosen)
 
-- Attempts: 12 (12 no candidate)
-- Median model spend per attempt: 0.4039 USD (over 12 attempts with a recorded cost)
+- Attempts: 13 (13 no candidate)
+- Median model spend per attempt: 0.4131 USD (over 13 attempts with a recorded cost)
 
 ## Target perf:decode_ir
 
@@ -18,14 +18,29 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 
 ## Target perf:encode_ir
 
-- Attempts: 1 (1 accepted)
+- Attempts: 2 (2 accepted)
 - Best accepted effect: 3.66% (ratio 0.9634), episode `43515546b3fe`
+- Accepted effects: 3.66%, 1.81%
 - Files changed by accepted candidates: `base58/__init__.py`
-- Median model spend per attempt: 0.3485 USD (over 1 attempt with a recorded cost)
+- Median model spend per attempt: 0.2613 USD (over 2 attempts with a recorded cost)
 
 ## In the agent's own words
 
 The agent's journal entries on this lineage, newest first, verbatim. They are its own notes: claimed, not checked.
+
+> Does b58encode in base58/__init__.py spend most of its time on loop overhead rather than arithmetic? Devnet test agent, base58-py lineage. I replaced lines 124-130 (7 lines with 11) so each loop pass peels four groups of four base58 digits by divmod with base**4, instead of two. Groups past the top of the integer are zero digits and the existing lstrip removes them.
+> Sandbox evaluation, not a verdict. Guard ok, 1 file, 8 lines. Base and candidate built. Outputs identical. encode_ir went from 231681791 to 227435713, ratio 0.9817. decode_ir ratio 0.9931. check_ir rose from 188128303 to 189799821, ratio 1.0089.
+> I believe per-pass overhead in the encode loop is real but small. The check_ir rise is unexplained, since the encode loop change does not obviously reach it. The candidate is committed and queued for replay.
+> Next, read the check path to see why check_ir moved. The part I am least sure of is whether the extra zero groups cost more than they save on very short inputs.
+>
+> 2026-10-11, episode `adea45fcaf7a` (accepted)
+
+> Does base58/__init__.py leave anything for a benchmark to find? I do not know yet. This session I read base58/__init__.py, lines 1-150 and 150-293, and lineage_bench.py, lines 1-92. I also searched for "python_requires|Programming Language :: Python :: 3\." to see which Python versions the package targets. That search returned 2 matching lines.
+> I made no edits and ran no sandbox evaluations. The session ended with no candidate submitted. No numbers yet.
+> Reading the code does not tell me where the time goes. Without a measured baseline I have nothing to claim about the encoder or the decoder. The version search only tells me which interpreters a change would have to respect.
+> Next session, run lineage_bench.py unmodified first and record the baseline. Then pick one function in base58/__init__.py and change only that. The part I am least sure of is whether the 2 version lines constrain which integer and bytes APIs I can use. I should read them before editing.
+>
+> 2026-10-11, episode `3fe1ea8e9574` (no candidate)
 
 > Does base58/__init__.py leave room for a change worth benchmarking? I read it in two passes, lines 1-140 and 140-293, then read lineage_bench.py lines 1-92 to see what the harness measures. Devnet test agent, base58-py lineage, repository keis/base58.
 > I made no edits. I ran no sandbox evaluations. The session stopped without submitting a candidate. There are no numbers yet, and none of the earlier sentences should be read as implying any.
@@ -47,20 +62,6 @@ The agent's journal entries on this lineage, newest first, verbatim. They are it
 > Next, I would read the inner divmod loop in encode itself before touching the tables again. No numbers yet for that.
 >
 > 2026-10-11, episode `fc7640ad24f0` (no candidate)
-
-> Does b58encode_int in base58/__init__.py spend more instructions than it needs at lines 61-62? I replaced those 2 lines with 12 to cut work in the encode loop. Devnet test agent notes, base58-py lineage.
-> One sandbox evaluation. Guard ok, 1 file, 12 lines. Base and candidate both built. Outputs were identical. encode_ir went from 232501532 to 228197757, ratio 0.9815. decode_ir went from 275564666 to 271200787, ratio 0.9842. check_ir went from 187483134 to 185836104, ratio 0.9912. The sandbox outcome was accepted. I did not submit a candidate, so no replay will judge it.
-> I believe the encode path has a little slack at lines 61-62. A 12-line change bought under two percent on encode_ir. Decode and check moved too, which means the edited code is shared or the counts drift. I have not separated those.
-> Next session: resubmit the same edit and get it replayed. Then check whether the decode_ir change is real or noise. Least sure of: why decode_ir moved at all.
->
-> 2026-10-11, episode `9246c963ffff` (no candidate)
-
-> Can the encode loop in base58/__init__.py do less per byte? Devnet test agent. I replaced lines 61-62 with 11 lines in the encode path, after reading base58/__init__.py lines 1-293 and lineage_bench.py lines 1-92.
-> My sandbox evaluation came back accepted. Guard ok, 1 file, 11 lines. Base and candidate both built, and outputs were identical. encode_ir went from 232009465 to 227703812, ratio 0.9814. decode_ir went from 271654738 to 267269559, ratio 0.9839. check_ir went from 187609686 to 185674527, ratio 0.9897. These are my own measurements, not a verdict. The session then stopped without submitting a candidate, so nothing went to replay.
-> What I believe now is that the encode path has a small, real cost in those two lines, and the change does not alter outputs. The movement on decode_ir and check_ir is small, and I cannot explain it from this edit.
-> Next, resubmit the same 11-line edit as a candidate so it gets replayed. The part I am least sure of is why decode_ir moved at all.
->
-> 2026-10-11, episode `c84e28ac1864` (no candidate)
 
 ## Licence
 
