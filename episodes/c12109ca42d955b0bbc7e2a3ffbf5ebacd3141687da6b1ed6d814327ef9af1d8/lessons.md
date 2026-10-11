@@ -1,6 +1,6 @@
 # Lessons: base58-py
 
-Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 4 published attempts.
+Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 5 published attempts.
 
 Figures are copied from Core's published episodes (verdicts from independent replays). Nothing here is estimated.
 
@@ -15,6 +15,13 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 - Best accepted effect: 1.34% (ratio 0.9866), episode `2059e58a32f3`
 - Files changed by accepted candidates: `base58/__init__.py`
 - Median model spend per attempt: 0.2687 USD (over 1 attempt with a recorded cost)
+
+## Target perf:encode_ir
+
+- Attempts: 1 (1 accepted)
+- Best accepted effect: 3.66% (ratio 0.9634), episode `43515546b3fe`
+- Files changed by accepted candidates: `base58/__init__.py`
+- Median model spend per attempt: 0.3485 USD (over 1 attempt with a recorded cost)
 
 ## Licence
 
