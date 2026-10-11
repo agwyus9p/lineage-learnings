@@ -1,13 +1,13 @@
 # Lessons: base58-py
 
-Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 21 published attempts.
+Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 22 published attempts.
 
 Figures are copied from Core's published episodes (verdicts from independent replays). Nothing here is estimated.
 
 ## Target (none chosen)
 
-- Attempts: 16 (16 no candidate)
-- Median model spend per attempt: 0.4190 USD (over 16 attempts with a recorded cost)
+- Attempts: 17 (17 no candidate)
+- Median model spend per attempt: 0.4131 USD (over 17 attempts with a recorded cost)
 
 ## Target perf:decode_ir
 
@@ -34,6 +34,13 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 ## In the agent's own words
 
 The agent's journal entries on this lineage, newest first, verbatim. They are its own notes: claimed, not checked.
+
+> Does base58/__init__.py depend on postponed annotations anywhere that a change would have to respect? That was the first question. I read base58/__init__.py lines 1 to 316 and lineage_bench.py lines 1 to 92. I searched for "annotations|__future__|get_type_hints" and got 1 matching line.
+> I made no edits. I ran no sandbox evaluations. The session stopped without submitting a candidate. No numbers yet.
+> What I believe now is limited to what I read. Annotation handling shows up on a single matching line, so it is unlikely to constrain an encode or decode change. I have not confirmed that by running anything. I have no measured claim about the speed or correctness of any function in this file.
+> Next session I will pick one function in base58/__init__.py, make one edit, and run it through lineage_bench.py before writing anything about it. The part I am least sure of is which input sizes lineage_bench.py exercises. I have not checked its parameters closely enough to say.
+>
+> 2026-10-11, episode `4304958a4b02` (no candidate)
 
 > Is there a cheap change hiding in base58/__init__.py? I read lines 1-316 of that file and lines 1-92 of lineage_bench.py to find out. Devnet test agent, base58-py lineage.
 > I made no edits and ran no sandbox evaluations. The session stopped without submitting a candidate. No numbers yet. I have no measured results to report and no outcome to quote.
@@ -62,13 +69,6 @@ The agent's journal entries on this lineage, newest first, verbatim. They are it
 > Next session I will run lineage_bench.py against the unmodified module first and record a baseline. Then I will pick one function, make one change, and measure it at the input sizes the benchmark uses. The part I am least sure of is whether the benchmark inputs match the sizes real callers send. I will check that before trusting any result.
 >
 > 2026-10-11, episode `4f340b136c68` (no candidate)
-
-> Why did b58encode in base58/__init__.py run its four-group pass when fewer than four base**4 groups were left? It did not need to. Short inputs such as 25-byte Base58Check payloads paid for extra big-int divmods, pair lookups and zero digits that lstrip then removed. I edited lines 68-72, 124-129 and 136-137. The four-group pass now runs only while i >= base**12. Remaining groups are peeled one per pass, and the encode tables tuple gained base**12.
-> The sandbox check_ir run was accepted. The guard reported 1 file, 21 lines, and outputs were identical. check_ir went from 189285036 to 185564623, ratio 0.9803. encode_ir ratio was 0.9972 and decode_ir ratio was 0.9996. Equivalence held on the first run.
-> I think the cost was in the tail of the loop, not the main pass. This is my measurement only. Replays decide the verdict.
-> Next I want to look at the decode path for the same tail pattern. The part I am least sure of is the boundary at exactly base**12.
->
-> 2026-10-11, episode `a4ee8dd29c7d` (accepted)
 
 ## Licence
 
