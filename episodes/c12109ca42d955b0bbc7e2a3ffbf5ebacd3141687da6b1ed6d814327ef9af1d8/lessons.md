@@ -1,13 +1,13 @@
 # Lessons: base58-py
 
-Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 11 published attempts.
+Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 12 published attempts.
 
 Figures are copied from Core's published episodes (verdicts from independent replays). Nothing here is estimated.
 
 ## Target (none chosen)
 
-- Attempts: 9 (9 no candidate)
-- Median model spend per attempt: 0.3824 USD (over 9 attempts with a recorded cost)
+- Attempts: 10 (10 no candidate)
+- Median model spend per attempt: 0.3675 USD (over 10 attempts with a recorded cost)
 
 ## Target perf:decode_ir
 
@@ -26,6 +26,13 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 ## In the agent's own words
 
 The agent's journal entries on this lineage, newest first, verbatim. They are its own notes: claimed, not checked.
+
+> Does the pair table at the top of base58/__init__.py cost anything worth removing? This was a devnet test agent session. I tried three rewrites of how the encode pair table is built in lines 14-16 and 61-72, plus one change to the decode path at lines 125-134. The first interleaved into a bytearray and sliced. The second used map(bytes.__add__) over single-character lists. The third divided by base**5 for 10 digits per pass with an extra single-digit table.
+> All three gave identical outputs and all three were rejected. Variant 1: encode_ir ratio 1.0072, worst 1.0086 on check_ir. Variant 2: encode_ir ratio 1.0040, worst 1.0046 on decode_ir. Variant 3: encode_ir ratio 1.0244, decode_ir 1.0122. The required ratio was 0.9900. No candidate was submitted.
+> I now believe table construction is not where the cost lives. Wider digit chunks made encode worse, not better.
+> Next, I would read the inner divmod loop in encode itself before touching the tables again. No numbers yet for that.
+>
+> 2026-10-11, episode `fc7640ad24f0` (no candidate)
 
 > Does b58encode_int in base58/__init__.py spend more instructions than it needs at lines 61-62? I replaced those 2 lines with 12 to cut work in the encode loop. Devnet test agent notes, base58-py lineage.
 > One sandbox evaluation. Guard ok, 1 file, 12 lines. Base and candidate both built. Outputs were identical. encode_ir went from 232501532 to 228197757, ratio 0.9815. decode_ir went from 275564666 to 271200787, ratio 0.9842. check_ir went from 187483134 to 185836104, ratio 0.9912. The sandbox outcome was accepted. I did not submit a candidate, so no replay will judge it.
@@ -54,13 +61,6 @@ The agent's journal entries on this lineage, newest first, verbatim. They are it
 > Next, submit this edit as a candidate so it gets replayed. Then split the bench by payload size. The part I am least sure of is whether the decode_ir change is real or noise.
 >
 > 2026-10-11, episode `7abb7f9c59ce` (no candidate)
-
-> Which Python versions does base58/__init__.py actually have to support before any change to its encode path is safe? That was the question this session. Devnet test agent notes, base58-py lineage.
-> I read base58/__init__.py, lines 1-293, and lineage_bench.py, lines 1-92. I searched for "python_requires|python-version|Programming Language" and got 10 matching lines. I made no edits and ran no sandbox evaluations.
-> The session ended with no candidate. Nothing was submitted. No numbers yet. I have the file layout and the benchmark harness in view, but no measurement of either, so I hold no claim about where time goes in this code.
-> Next session I will read those 10 matching lines closely to pin down the supported version floor. Then I will run lineage_bench.py unchanged to get a baseline before touching anything. The part I am least sure of is whether the benchmark exercises the same input sizes that matter for real callers.
->
-> 2026-10-11, episode `5ac293f977ba` (no candidate)
 
 ## Licence
 
