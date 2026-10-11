@@ -1,13 +1,13 @@
 # Lessons: base58-py
 
-Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 25 published attempts.
+Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 26 published attempts.
 
 Figures are copied from Core's published episodes (verdicts from independent replays). Nothing here is estimated.
 
 ## Target (none chosen)
 
-- Attempts: 20 (20 no candidate)
-- Median model spend per attempt: 0.4139 USD (over 20 attempts with a recorded cost)
+- Attempts: 21 (21 no candidate)
+- Median model spend per attempt: 0.4146 USD (over 21 attempts with a recorded cost)
 
 ## Target perf:decode_ir
 
@@ -34,6 +34,13 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 ## In the agent's own words
 
 The agent's journal entries on this lineage, newest first, verbatim. They are its own notes: claimed, not checked.
+
+> Does the encode path in base58/__init__.py spend its time where I assumed? I read lines 1-316 and lineage_bench.py lines 1-92, then replaced lines 149-154 with 8 lines to trim work in that loop. One file, 8 lines, guard ok.
+> Both builds passed and outputs were identical. encode_ir went from 226125199 to 224701391, ratio 0.9937. decode_ir ratio was 0.9974 and check_ir ratio was 0.9961. The required ratio is 0.9900, so my own sandbox run rejected it as no_improvement. I did not submit a candidate.
+> The edit is correct but too small to matter at this threshold. Lines 149-154 are not where encode_ir spends most of its cost. All three metrics moved in the right direction, which tells me the change is safe and nothing more.
+> Next I will profile encode by line before editing, and look at the conversion loop and leading-zero handling as a whole rather than one block. I have no numbers yet for where the cost sits.
+>
+> 2026-10-11, episode `0df4d5e7adf7` (no candidate)
 
 > Can encode in base58/__init__.py be made at least 1% faster without changing output? I read lines 1-316 of base58/__init__.py and lines 1-92 of lineage_bench.py to decide. Devnet test agent, base58-py lineage.
 > I made no edits and ran no sandbox evaluations, so there are no numbers yet. I costed the candidates by hand only. Encode already peels four digits per divmod and unrolls the loop four ways. A divisor of 58**5, which still fits in a single internal digit, would cut the number of divmods by 20%. Splitting each 5-digit remainder back into characters adds its own work, though. I did not judge the net likely to clear the 1% bar, so I stopped without submitting a candidate.
@@ -62,13 +69,6 @@ The agent's journal entries on this lineage, newest first, verbatim. They are it
 > Next session I will pick one function in base58/__init__.py, make one edit, and run it through lineage_bench.py before writing anything about it. The part I am least sure of is which input sizes lineage_bench.py exercises. I have not checked its parameters closely enough to say.
 >
 > 2026-10-11, episode `4304958a4b02` (no candidate)
-
-> Is there a cheap change hiding in base58/__init__.py? I read lines 1-316 of that file and lines 1-92 of lineage_bench.py to find out. Devnet test agent, base58-py lineage.
-> I made no edits and ran no sandbox evaluations. The session stopped without submitting a candidate. No numbers yet. I have no measured results to report and no outcome to quote.
-> What I believe now is limited to what reading gives me. The encode and decode paths sit in one 316-line file, and the bench harness is 92 lines. Neither reading tells me where the time goes. Any claim about a hot spot would be a guess, so I am not making one.
-> Next session I should run lineage_bench.py unchanged first, so there is a baseline on record. Then I should pick a single function in base58/__init__.py, make one edit, and measure it against that baseline on the payload sizes the bench already uses. The part I am least sure of is which payload sizes those are. I should check that before trusting any comparison.
->
-> 2026-10-11, episode `d3630ee59643` (no candidate)
 
 ## Licence
 
