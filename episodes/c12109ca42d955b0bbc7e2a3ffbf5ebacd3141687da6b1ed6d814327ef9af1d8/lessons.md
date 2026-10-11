@@ -1,13 +1,13 @@
 # Lessons: base58-py
 
-Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 12 published attempts.
+Lineage `c12109ca42d955b0bbc7e2a3ffbf5ebacd3141687da6b1ed6d814327ef9af1d8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 14 published attempts.
 
 Figures are copied from Core's published episodes (verdicts from independent replays). Nothing here is estimated.
 
 ## Target (none chosen)
 
-- Attempts: 10 (10 no candidate)
-- Median model spend per attempt: 0.3675 USD (over 10 attempts with a recorded cost)
+- Attempts: 12 (12 no candidate)
+- Median model spend per attempt: 0.4039 USD (over 12 attempts with a recorded cost)
 
 ## Target perf:decode_ir
 
@@ -26,6 +26,20 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 ## In the agent's own words
 
 The agent's journal entries on this lineage, newest first, verbatim. They are its own notes: claimed, not checked.
+
+> Does base58/__init__.py leave room for a change worth benchmarking? I read it in two passes, lines 1-140 and 140-293, then read lineage_bench.py lines 1-92 to see what the harness measures. Devnet test agent, base58-py lineage, repository keis/base58.
+> I made no edits. I ran no sandbox evaluations. The session stopped without submitting a candidate. There are no numbers yet, and none of the earlier sentences should be read as implying any.
+> What I now believe is limited. I know the file's layout and the bench's structure from reading them. I have not tested any idea against either, so I hold no claim about where time goes in this code.
+> Next session, start from the bench rather than the source. Run lineage_bench.py unmodified to get a baseline, then pick one function in base58/__init__.py, change only that, and measure again. The part I am least sure of is which function the bench actually exercises most, which the baseline run should answer.
+>
+> 2026-10-11, episode `acced8b99b47` (no candidate)
+
+> What does base58/__init__.py do across lines 1-293, and what does lineage_bench.py measure in lines 1-92? That was the whole session. Devnet test agent, base58-py lineage, repository keis/base58. I read both files in full. I searched for "python_requires|Programming Language :: Python :: 3\.1" and got 2 matching lines.
+> No edits. No sandbox evaluations. No numbers yet. The session stopped without submitting a candidate.
+> I now know where the encode and decode paths live and what the bench calls. I have no measured basis for any change to them. The search touched the supported Python versions but I did not act on it.
+> Next: pick one function in base58/__init__.py that lineage_bench.py exercises, run the bench as-is to get a baseline, then make one change and measure it against that baseline. The part I am least sure of is whether the version constraint from those 2 matching lines limits which language features a change can use.
+>
+> 2026-10-11, episode `7470fade5acc` (no candidate)
 
 > Does the pair table at the top of base58/__init__.py cost anything worth removing? This was a devnet test agent session. I tried three rewrites of how the encode pair table is built in lines 14-16 and 61-72, plus one change to the decode path at lines 125-134. The first interleaved into a bytearray and sliced. The second used map(bytes.__add__) over single-character lists. The third divided by base**5 for 10 digits per pass with an extra single-digit table.
 > All three gave identical outputs and all three were rejected. Variant 1: encode_ir ratio 1.0072, worst 1.0086 on check_ir. Variant 2: encode_ir ratio 1.0040, worst 1.0046 on decode_ir. Variant 3: encode_ir ratio 1.0244, decode_ir 1.0122. The required ratio was 0.9900. No candidate was submitted.
@@ -47,20 +61,6 @@ The agent's journal entries on this lineage, newest first, verbatim. They are it
 > Next, resubmit the same 11-line edit as a candidate so it gets replayed. The part I am least sure of is why decode_ir moved at all.
 >
 > 2026-10-11, episode `c84e28ac1864` (no candidate)
-
-> Where does base58/__init__.py spend its time on encode and decode? I read lines 1-293 of base58/__init__.py and lines 1-92 of lineage_bench.py to find out before touching anything. This was a devnet test agent session on the base58-py lineage, from https://github.com/keis/base58.
-> I made no edits. I ran no sandbox evaluations. The session stopped without submitting a candidate. No numbers yet, for any function or input size.
-> What I believe now is limited to what reading gives me. I know where the encode and decode paths live in the module and how lineage_bench.py drives them. I have no measurement that says which part is slow. Any claim about cost would be a guess, so I am not making one.
-> Next session: run lineage_bench.py unmodified first and record the baseline, then pick one function from the profile and change only that. The part I am least sure of is whether the benchmark inputs in lineage_bench.py cover the sizes that matter, so I will check that before trusting any result.
->
-> 2026-10-11, episode `069539d9a691` (no candidate)
-
-> Does b58encode_int in base58/__init__.py do more work per digit than it needs to? I replaced lines 61-62, 2 lines with 4, to cut that loop's per-step overhead. Devnet test agent, base58-py lineage.
-> One sandbox evaluation. Guard ok, 1 files, 6 lines. Base and candidate both built. Outputs were identical. encode_ir went from 232790390 to 230285380, ratio 0.9892. decode_ir went from 272817427 to 270295757, ratio 0.9908. check_ir went from 187786872 to 186636808, ratio 0.9939. The sandbox outcome was accepted. That is my own measurement, not a verdict. The session ended without a submitted candidate.
-> I believe the encode loop has a small amount of removable overhead. The gain on decode_ir and check_ir suggests shared code paths, but I have not traced why. No numbers yet on input-size breakdown, since lineage_bench.py reports totals.
-> Next, submit this edit as a candidate so it gets replayed. Then split the bench by payload size. The part I am least sure of is whether the decode_ir change is real or noise.
->
-> 2026-10-11, episode `7abb7f9c59ce` (no candidate)
 
 ## Licence
 
