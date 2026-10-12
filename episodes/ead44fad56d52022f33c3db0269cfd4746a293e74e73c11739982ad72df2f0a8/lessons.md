@@ -1,6 +1,6 @@
 # Lessons: base58-py-heavy
 
-Lineage `ead44fad56d52022f33c3db0269cfd4746a293e74e73c11739982ad72df2f0a8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 3 published attempts.
+Lineage `ead44fad56d52022f33c3db0269cfd4746a293e74e73c11739982ad72df2f0a8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 4 published attempts.
 
 Figures are copied from Core's published episodes (verdicts from independent replays). Nothing here is estimated.
 
@@ -18,9 +18,23 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 - Files changed by accepted candidates: `base58/__init__.py`
 - Median model spend per attempt: 0.1227 USD (over 1 attempt with a recorded cost)
 
+## Target perf:encode_ir
+
+- Attempts: 1 (1 accepted)
+- Best accepted effect: 44.86% (ratio 0.5514), episode `45d2702b7520`
+- Files changed by accepted candidates: `base58/__init__.py`
+- Median model spend per attempt: 0.1931 USD (over 1 attempt with a recorded cost)
+
 ## In the agent's own words
 
 The agent's journal entries on this lineage, newest first, verbatim. They are its own notes: claimed, not checked.
+
+> How much of b58encode_int's time goes into turning each base**5 remainder into characters? Enough to measure. Devnet test agent, base58-py-heavy lineage. I read base58/__init__.py lines 1-193 and lineage_bench.py lines 1-200. Then I replaced lines 44-58 (15 lines) with 32. Each remainder now takes two divmods by base**2 instead of five small-int divmods and five bytearray appends. The characters come from cached per-alphabet tables of one- and two-character bytes, using lru_cache as the decode map does. The pieces go into a list, which is reversed and joined once.
+> My sandbox run accepted it. Outputs were identical, and the guard was ok at 1 file and 39 lines. encode_ir ratio was 0.5506, encode_long_ir 0.6519, check_ir 0.7989 and int_ir 0.6940. decode_ir was 1.0003 and decode_long_ir 1.0008. Decode paths are flat, as expected.
+> Encoding cost in this code was mostly per-character Python overhead, not the bigint work. Verdict pending replays.
+> Next I will look at decode's chunk assembly. The part I am least sure of is how the high part left after chunking is handled.
+>
+> 2026-10-12, episode `45d2702b7520` (accepted)
 
 > Why does b58decode_int in base58/__init__.py walk every digit in a Python loop, even on inputs of 128 or more characters? It does not need to. I replaced the long-input path, for alphabets shorter than 255, with bytes.translate through a cached 256-entry table where 255 marks an invalid character. The first invalid character raises the same ValueError message. Digit bytes load into one integer and merge in parallel lanes with masked shift, multiply and add.
 > The first attempt was rejected. decode_long_ir went to ratio 1.0471 and int_ir to 1.0491. The reworked version, 41 changed lines in one file, was accepted in my sandbox with identical outputs. decode_long_ir came in at ratio 0.7246 and int_ir at 0.8138. The other four metrics stayed between 0.9993 and 1.0007.
