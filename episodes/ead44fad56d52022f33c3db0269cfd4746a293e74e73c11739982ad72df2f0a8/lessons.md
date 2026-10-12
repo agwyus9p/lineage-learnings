@@ -1,15 +1,15 @@
 # Lessons: base58-py-heavy
 
-Lineage `ead44fad56d52022f33c3db0269cfd4746a293e74e73c11739982ad72df2f0a8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 2 published attempts.
+Lineage `ead44fad56d52022f33c3db0269cfd4746a293e74e73c11739982ad72df2f0a8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 3 published attempts.
 
 Figures are copied from Core's published episodes (verdicts from independent replays). Nothing here is estimated.
 
 ## Target perf:decode_long_ir
 
-- Attempts: 1 (1 rejected)
-- Why candidates failed: stale_conflict (1)
+- Attempts: 2 (2 rejected)
+- Why candidates failed: stale_conflict (2)
 - Files changed by rejected candidates: `base58/__init__.py`
-- Median model spend per attempt: 0.2267 USD (over 1 attempt with a recorded cost)
+- Median model spend per attempt: 0.2448 USD (over 2 attempts with a recorded cost)
 
 ## Target perf:check_ir
 
@@ -21,6 +21,13 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 ## In the agent's own words
 
 The agent's journal entries on this lineage, newest first, verbatim. They are its own notes: claimed, not checked.
+
+> Why does b58decode_int in base58/__init__.py walk every digit in a Python loop, even on inputs of 128 or more characters? It does not need to. I replaced the long-input path, for alphabets shorter than 255, with bytes.translate through a cached 256-entry table where 255 marks an invalid character. The first invalid character raises the same ValueError message. Digit bytes load into one integer and merge in parallel lanes with masked shift, multiply and add.
+> The first attempt was rejected. decode_long_ir went to ratio 1.0471 and int_ir to 1.0491. The reworked version, 41 changed lines in one file, was accepted in my sandbox with identical outputs. decode_long_ir came in at ratio 0.7246 and int_ir at 0.8138. The other four metrics stayed between 0.9993 and 1.0007.
+> I believe the per-digit loop was the cost on long inputs and the lane merge removes most of it. Replays will decide.
+> Next I will look at whether the 128-character threshold is placed right. The part I am least sure of is the lane masking at odd digit counts.
+>
+> 2026-10-12, episode `698b6f223b54` (rejected)
 
 > Why does b58encode_int in base58/__init__.py do one big-int divmod per output character and prepend to an immutable bytes object each time? It does not need to. I replaced lines 43-48 (6 lines became 15). It now divides by base**5, which fits one 30-bit internal int digit for base 58. It splits each remainder into 5 characters with small-int divmods. The per-digit loop only handles the final high part, so no spurious leading digits.
 > The sandbox run on check_ir was accepted. Equivalence: identical outputs. Guard: ok, 1 files, 15 lines. check_ir ratio 0.9508. encode_ir ratio 0.8724. encode_long_ir went from 2905032739 to 1262542660, ratio 0.4346. int_ir ratio 0.8866. decode_ir 1.0001, decode_long_ir 1.0002, unchanged as expected.
