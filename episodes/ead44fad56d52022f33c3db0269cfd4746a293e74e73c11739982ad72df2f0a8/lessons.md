@@ -1,6 +1,6 @@
 # Lessons: base58-py-heavy
 
-Lineage `ead44fad56d52022f33c3db0269cfd4746a293e74e73c11739982ad72df2f0a8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 5 published attempts.
+Lineage `ead44fad56d52022f33c3db0269cfd4746a293e74e73c11739982ad72df2f0a8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 6 published attempts.
 
 Figures are copied from Core's published episodes (verdicts from independent replays). Nothing here is estimated.
 
@@ -15,10 +15,12 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 
 ## Target perf:check_ir
 
-- Attempts: 1 (1 accepted)
+- Attempts: 2 (1 accepted, 1 rejected)
 - Best accepted effect: 4.93% (ratio 0.9507), episode `28eac7028adc`
+- Why candidates failed: stale_conflict (1)
 - Files changed by accepted candidates: `base58/__init__.py`
-- Median model spend per attempt: 0.1227 USD (over 1 attempt with a recorded cost)
+- Files changed by rejected candidates: `base58/__init__.py`
+- Median model spend per attempt: 0.1480 USD (over 2 attempts with a recorded cost)
 
 ## Target perf:encode_ir
 
@@ -30,6 +32,13 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 ## In the agent's own words
 
 The agent's journal entries on this lineage, newest first, verbatim. They are its own notes: claimed, not checked.
+
+> Why did b58decode_int spend one dict lookup and one big-int multiply-add per character on inputs under 128 characters? It no longer has to. I edited base58/__init__.py at lines 108-111 and 122-126. For alphabets shorter than 255, the input now becomes digit values in one bytes.translate call through a cached 256-entry table, with 255 marking an invalid character. It then folds five digits per big-int step, multiplying by base ** 5.
+> My sandbox run on check_ir was accepted, with identical outputs and the guard ok at 1 file and 27 lines. check_ir went from 2402408780 to 2221214002, ratio 0.9246. decode_ir ratio was 0.7541 and int_ir was 0.9641. encode_ir, encode_long_ir and decode_long_ir were at 1.0017, 1.0016 and 1.0011.
+> The short path was the cost. The long paths did not move, as expected.
+> The candidate is queued for independent replays. Next I will look at whether the 128-character cutoff is placed correctly. The part I am least sure of is the leading-zero padding before the five-digit fold.
+>
+> 2026-10-12, episode `f3c61612a64c` (rejected)
 
 > How much of b58decode_int's time on long inputs goes to the per-character dict lookup and the Python-level 5-digit folding? I replaced both on the long-input path, meaning 128+ characters with alphabets shorter than 255. Edits were base58/__init__.py lines 107-128, 22 lines replaced by 62, and lines 13-14, 2 replaced by 3. Characters now go through bytes.translate with a cached 256-entry table. A value of 255 marks an invalid character. Validation finds the first invalid byte and raises the same ValueError message as before.
 > My own sandbox run, not a verdict: equivalence identical, guard ok, 1 file, 49 lines. decode_long_ir went from 1058148213 to 664325376, ratio 0.6278. int_ir ratio 0.8511. decode_ir 1.0059, encode_long_ir 1.0026, check_ir 1.0017, encode_ir 0.9999.
@@ -58,13 +67,6 @@ The agent's journal entries on this lineage, newest first, verbatim. They are it
 > Next I want to look at whether b58decode_int has a similar per-character big-int cost. No numbers yet. I am least sure the high-part loop handles leading-zero edge cases beyond what the equivalence suite covers.
 >
 > 2026-10-12, episode `28eac7028adc` (accepted)
-
-> Why does b58decode_int in base58/__init__.py get slow on long inputs? It multiplied the growing big integer by the base once per input character, which is quadratic in input length. I edited lines 98-107 three times. The final version combines digits into 10-digit chunks with machine-word arithmetic (58**10 < 2**63) for inputs longer than 128 characters, and multiplies the big integer once per chunk by base**10. Shorter inputs keep the per-digit loop.
-> The first attempt was rejected: decode_ir worsened +16.53% and check_ir +6.90%, against a 1% limit. The second still failed, with decode_ir at +2.94%. The third passed my sandbox. decode_long_ir went from 4606027672 to 1398128067, ratio 0.3035. decode_ir ratio 1.0080, check_ir 1.0035, int_ir 0.9359. Outputs were identical. Submitted, 17 changed lines, status queued.
-> The short-input path is where the guard budget gets spent. That 128-character threshold is my guess, not a measurement.
-> Next: wait for replays, then sweep the threshold. Least sure of: decode_ir at 1.0080, near the limit.
->
-> 2026-10-12, episode `9d158a259685` (rejected)
 
 ## Licence
 
