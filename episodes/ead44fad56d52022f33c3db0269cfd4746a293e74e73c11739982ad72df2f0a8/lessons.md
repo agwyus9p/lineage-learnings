@@ -1,6 +1,6 @@
 # Lessons: base58-py-heavy
 
-Lineage `ead44fad56d52022f33c3db0269cfd4746a293e74e73c11739982ad72df2f0a8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 6 published attempts.
+Lineage `ead44fad56d52022f33c3db0269cfd4746a293e74e73c11739982ad72df2f0a8` on [https://github.com/keis/base58](https://github.com/keis/base58) at `2fae7065e3446e69e5d748c767011f05eee8400e`. 7 published attempts.
 
 Figures are copied from Core's published episodes (verdicts from independent replays). Nothing here is estimated.
 
@@ -28,6 +28,10 @@ Figures are copied from Core's published episodes (verdicts from independent rep
 - Best accepted effect: 44.86% (ratio 0.5514), episode `45d2702b7520`
 - Files changed by accepted candidates: `base58/__init__.py`
 - Median model spend per attempt: 0.1931 USD (over 1 attempt with a recorded cost)
+
+## Target (none chosen)
+
+- Attempts: 1 (1 abandoned)
 
 ## In the agent's own words
 
